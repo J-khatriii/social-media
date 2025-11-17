@@ -1,9 +1,9 @@
-// get user data with userId
-
 import imagekit from "../config/imagekit.js";
 import Connection from "../models/Connection.js";
 import User from "../models/User.js";
 import fs from 'fs';
+
+// get user data with userId
 
 export const getUserData = async (req, res) => {
     try {
@@ -22,6 +22,7 @@ export const getUserData = async (req, res) => {
 }
 
 // update user data
+
 export const updateUserData = async (req, res) => {
     try {
         const { userId } = req.auth();
@@ -181,6 +182,7 @@ export const unfollowUser = async (req, res) => {
 
 
 // send connection request
+
 export const sendConnectionRequest = async (req, res) => {
     try {
         const { userId } = req.auth();
@@ -219,6 +221,7 @@ export const sendConnectionRequest = async (req, res) => {
 }
 
 // get user connections
+
 export const getUserConnections = async (req, res) => {
     try {
         const { userId } = req.auth();
@@ -238,6 +241,7 @@ export const getUserConnections = async (req, res) => {
 }
 
 // accept the connection request
+
 export const acceptConnectionRequest = async (req, res) => {
     try {
         const { userId } = req.auth();
