@@ -2,11 +2,14 @@ import { Inngest } from "inngest";
 import User from "../models/User.js";
 import Connection from "../models/Connection.js";
 import sendEmail from "../config/nodeMailer.js";
+import Story from "../models/Story.js";
 
 // Create a client to send and receive events
+
 export const inngest = new Inngest({ id: "social-media" });
 
 // inngest function to save user data to database 
+
 const syncUserCreation = inngest.createFunction(
   { id: "sync-user-from-clerk" },
   { event: "clerk/user.created" },
@@ -34,6 +37,7 @@ const syncUserCreation = inngest.createFunction(
 );
 
 // inngest function to update user data to database 
+
 const syncUserUpdation = inngest.createFunction(
   { id: "update-user-from-clerk" },
   { event: "clerk/user.updated" },
@@ -51,6 +55,7 @@ const syncUserUpdation = inngest.createFunction(
 );
 
 // inngest function to delete user data to database 
+
 const syncUserDelation = inngest.createFunction(
   { id: "delete-user-from-clerk" },
   { event: "clerk/user.deleted" },
@@ -61,6 +66,7 @@ const syncUserDelation = inngest.createFunction(
 );
 
 // inngest function to send reminder when a new connection request is added
+
 const sendNewConnectionRequestReminder = inngest.createFunction(
   { id: "send-new-connection-request-reminder" },
   { event: "app/connection-request" },
@@ -116,10 +122,29 @@ const sendNewConnectionRequestReminder = inngest.createFunction(
   }
 );
 
+// inngest function to delete a story after 24 hours
+
+const deleteStory = inngest.createFunction(
+  { id: "story-delete" },
+  { event: "app/story.delete"},
+
+  async ({ event, step }) => {
+    const { storyId } = event.data;
+    const in24hours = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await step.sleepUntil("wait-for-24-hours", in24hours);
+    await step.run("delete-story", async () => {
+      await Story.findByIdAndDelete(storyId);
+      return { message: "Story deleted."}
+    });
+  }
+);
+
 // Create an empty array where we'll export future Inngest functions
 export const functions = [
   syncUserCreation,
   syncUserUpdation,
   syncUserDelation,
   sendNewConnectionRequestReminder,
+  deleteStory,
 ]
