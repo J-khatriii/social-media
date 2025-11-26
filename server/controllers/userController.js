@@ -69,7 +69,7 @@ export const updateUserData = async (req, res) => {
                 ]
             });
 
-            updatedData.profile_picture = url;
+            updatedData.profile_photo = url;
         }
 
         if(cover) {
@@ -90,7 +90,7 @@ export const updateUserData = async (req, res) => {
                 ]
             });
 
-            updatedData.cover_picture = url;
+            updatedData.cover_photo = url;
         }
 
         const user = await User.findByIdAndUpdate(userId, updatedData, { new: true });
@@ -146,7 +146,7 @@ export const followUser = async (req, res) => {
         user.following.push(id);
         await user.save();
 
-        const toUser = await User.findbyId(id);
+        const toUser = await User.findById(id);
         toUser.followers.push(userId);
         await toUser.save();
 
@@ -170,7 +170,7 @@ export const unfollowUser = async (req, res) => {
         user.following = user.following.filter(user => user !== id);
         await user.save();
 
-        const toUser = await User.findbyId(id);
+        const toUser = await User.findById(id);
         user.followers = user.followers.filter(user => user !== id);
         await toUser.save();
 
@@ -187,7 +187,7 @@ export const unfollowUser = async (req, res) => {
 export const sendConnectionRequest = async (req, res) => {
     try {
         const { userId } = req.auth();
-        const { id } = req.body();
+        const { id } = req.body;
 
         // check if user has send more than 20 connection request in past 24 hours
         const last24hours = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -233,7 +233,7 @@ export const sendConnectionRequest = async (req, res) => {
 export const getUserConnections = async (req, res) => {
     try {
         const { userId } = req.auth();
-        const user = await User.findbyId(userId).populate("connections followers following");
+        const user = await User.findById(userId).populate("connections followers following");
 
         const connections = user.connections;
         const followers = user.followers;
@@ -255,13 +255,13 @@ export const acceptConnectionRequest = async (req, res) => {
         const { userId } = req.auth();
         const { id } = req.body();
 
-        const connection = await Connection.findbyId({from_user_id: userId, to_user_id: id});
+        const connection = await Connection.findById({from_user_id: userId, to_user_id: id});
 
         if(!connection){
             res.json({success: false, message: "connection not found"});
         }
 
-        const user = await User.findbyId(userId);
+        const user = await User.findById(userId);
         user.connections.push(id);
         await user.save();
 

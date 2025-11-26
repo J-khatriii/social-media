@@ -1,4 +1,3 @@
-import { LayoutDashboard, Home, StickyNote, Layers, Flag, Calendar, LifeBuoy, Settings } from "lucide-react";
 import { Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import Feed from "./pages/Feed";
@@ -13,17 +12,25 @@ import Layout from "./pages/Layout";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchUser } from "./Features/user/userSlice";
 
 const App = () => {
 
   const { user } = useUser();
   const { getToken } = useAuth();
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    if(user){
-      getToken().then((token) => console.log(token));
+    const fetchData = async () => {
+      if(user){
+        const token = await getToken();
+        dispatch(fetchUser(token));
+      }
     }
-  }, [user]);
+    fetchData();
+  }, [user, getToken, dispatch]);
 
   return (
     <>
