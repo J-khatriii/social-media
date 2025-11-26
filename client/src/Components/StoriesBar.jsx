@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { dummyStoriesData } from "../assets/assets";
 import { Plus } from "lucide-react";
 import moment from "moment";
-import StoryModel from "./StoryModel";
+import StoryModal from "./StoryModal";
 import StoryViewer from "./StoryViewer";
 
 const StoriesBar = () => {
@@ -59,7 +59,7 @@ const StoriesBar = () => {
 
       {/* add story model  */}
 
-      {showModel && <StoryModel setShowModel={setShowModel} fetchStories={fetchStories} />}
+      {showModel && <StoryModal setShowModel={setShowModel} fetchStories={fetchStories} />}
 
       {/* view story model */}
 
