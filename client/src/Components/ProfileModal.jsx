@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { dummyUserData } from "../assets/assets";
 import { Pencil } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "../Features/user/userSlice";
@@ -125,4 +124,4 @@ const ProfileModal = ({setShowEdit}) => {
   )
 }
 
-export default ProfileModal;
+export default ProfileModal

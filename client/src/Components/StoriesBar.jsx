@@ -1,18 +1,35 @@
 import { useEffect, useState } from "react"
-import { dummyStoriesData } from "../assets/assets";
 import { Plus } from "lucide-react";
 import moment from "moment";
 import StoryModal from "./StoryModal";
 import StoryViewer from "./StoryViewer";
+import { useAuth } from "@clerk/clerk-react";
+import api from "../api/axios";
+import toast from "react-hot-toast";
 
 const StoriesBar = () => {
+
+    const { getToken } = useAuth();
 
     const [stories, setStories] = useState([]);
     const [showModel, setShowModel] = useState(false);
     const [viewStory, setViewStory] = useState(null);
 
     const fetchStories = async () => {
-        setStories(dummyStoriesData);
+        try {
+            const token = await getToken();
+            const { data } = await api.get("/api/story/get", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            if(data.success) {
+                setStories(data.stories);
+            }else{
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error("Failed to fetch stories");
+        }
     }
 
     useEffect(() => {
@@ -38,7 +55,7 @@ const StoriesBar = () => {
         {
             stories.map((story, index) => (
                 <div onClick={() => setViewStory(story)} key={index} className={`relative rounded-lg shadow min-w-30 max-w-30 max-h-40 cursor-pointer hover:shadow-lg transition-all duration-200 bg-gradient-to-b from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-800 active:scale-95`}>
-                    <img src={story.user.profile_picture} alt="" className="absolute size-8 top-3 left-3 z-10 rounded-full ring ring-gray-100 shadow" />
+                    <img src={story.user.profile_photo} alt="" className="absolute size-8 top-3 left-3 z-10 rounded-full ring ring-gray-100 shadow" />
                     <p className="absolute top-18 left-3 text-white/60 text-sm truncate max-w-24">{story.content}</p>
                     <p className="absolute text-white bottom-1 right-2 text-xs z-10">{moment(story.createdAt).fromNow()}</p>
                     {
