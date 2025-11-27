@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { dummyPostsData, dummyUserData } from "../assets/assets";
 import Loading from "../Components/Loading";
 import UserProfileInfo from "../Components/UserProfileInfo";
 import PostCard from "../Components/PostCard";
@@ -112,4 +111,4 @@ const Profile = () => {
   ) : <Loading />
 }
 
-export default Profile;
+export default Profile

@@ -56,7 +56,7 @@ export const getStories = async (req, res) => {
         // user connections and following
         const userIds = [userId, ...user.connections, ...user.following];
 
-        const stories = await story.find({
+        const stories = await Story.find({
             user: {$in: userIds}
         }).populate("user").sort({createdAt: -1});
 
