@@ -1,4 +1,5 @@
 import imagekit from "../config/imagekit.js";
+import { inngest } from "../inngest/index.js";
 import Connection from "../models/Connection.js";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
@@ -137,10 +138,11 @@ export const followUser = async (req, res) => {
         const { userId } = req.auth();
         const { id } = req.body;
 
-        const user = User.findById(userId);
+        const user = await User.findById(userId);
+        if (!user) return res.json({ success: false, message: "User not found" });
 
-        if(user.following.includes(id)) {
-            return res.json({success: false, message: "You are already following this user"});
+        if (user.following.includes(id)) {
+            return res.json({ success: false, message: "Already following" });
         }
 
         user.following.push(id);
@@ -150,13 +152,13 @@ export const followUser = async (req, res) => {
         toUser.followers.push(userId);
         await toUser.save();
 
-        res.json({success: true, message: "You are now following this user"});
-    } catch (error) {
-        console.log(error);
-        res.json({success: false, message: error.message});
+        return res.json({ success: true, message: "Now following user" });
+
+    } catch (err) {
+        console.log(err);
+        return res.json({ success: false, message: err.message });
     }
 }
-
 
 // unfollow users
 
@@ -165,22 +167,22 @@ export const unfollowUser = async (req, res) => {
         const { userId } = req.auth();
         const { id } = req.body;
 
-        const user = User.findById(userId);
-
-        user.following = user.following.filter(user => user !== id);
-        await user.save();
-
+        const user = await User.findById(userId);
         const toUser = await User.findById(id);
-        user.followers = user.followers.filter(user => user !== id);
+
+        user.following = user.following.filter(u => u.toString() !== id);
+        toUser.followers = toUser.followers.filter(u => u.toString() !== userId);
+
+        await user.save();
         await toUser.save();
 
-        res.json({success: true, message: "You are now following this user"});
-    } catch (error) {
-        console.log(error);
-        res.json({success: false, message: error.message});
+        return res.json({ success: true, message: "Unfollowed successfully" });
+
+    } catch (err) {
+        console.log(err);
+        return res.json({ success: false, message: err.message });
     }
 }
-
 
 // send connection request
 
@@ -253,9 +255,9 @@ export const getUserConnections = async (req, res) => {
 export const acceptConnectionRequest = async (req, res) => {
     try {
         const { userId } = req.auth();
-        const { id } = req.body();
+        const { id } = req.body;
 
-        const connection = await Connection.findById({from_user_id: userId, to_user_id: id});
+        const connection = await Connection.findOne({from_user_id: id, to_user_id: userId, status: "pending"});
 
         if(!connection){
             res.json({success: false, message: "connection not found"});
@@ -265,7 +267,7 @@ export const acceptConnectionRequest = async (req, res) => {
         user.connections.push(id);
         await user.save();
 
-        const toUser = await User.findId(id);
+        const toUser = await User.findById(id);
         toUser.connections.push(userId);
         await toUser.save();
 

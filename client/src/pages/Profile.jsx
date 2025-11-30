@@ -28,7 +28,7 @@ const Profile = () => {
       const { data } = await api.post("/api/user/profiles", { profileId }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log("profile data:", data.profile);
+      // console.log("profile data:", data.profile);
 
       if(data.success){
         setUser(data.profile);
@@ -56,7 +56,7 @@ const Profile = () => {
         <div className="bg-white rounded-2xl shadow overflow-hidden">
           {/* cover photo */}
           <div className="h-40 md:h-56 bg-linear-to-r from-indigo-200 via-purple-200 to-pink-200">
-            {user.cover_photo && <img src={user.cover_photo} className="w-full h-full object-cover" alt="" />}
+            {user.cover_photo && <img src={user.cover_photo} className="w-full h-full object-cover" alt="user" />}
           </div>
 
           {/* user info */}
