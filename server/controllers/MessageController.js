@@ -22,7 +22,8 @@ export const sseController = (req, res) => {
     connections[userId] = res;
 
     // send an initial event to the event
-    res.write("log: connected to SSE stream\n\n");
+    // res.write("log: connected to SSE stream\n\n");
+    res.write(`data: "connected"\n\n`);
 
     // Handle client disconnection
     res.on("close", () => {
@@ -50,7 +51,7 @@ export const sendMessage = async (req, res) => {
 
             });
 
-            const media_url = imagekit.helper.buildSrc({
+            media_url = imagekit.helper.buildSrc({
                 src: response.filePath,
                 transformation: [
                     {
@@ -113,7 +114,7 @@ export const getChatMessages = async (req, res) => {
 export const getUserRecentMessages = async (req, res) => {
     try {
         const { userId } = req.auth();
-        const messages = await Message.find({to_user_id: userId}.populate("from_user_id to_user_id")).sort({created_at: -1});
+        const messages = await Message.find({to_user_id: userId}).populate("from_user_id to_user_id").sort({created_at: -1});
 
         res.json({success: true, messages});
     } catch (error) {

@@ -24,7 +24,7 @@ const CreatePost = () => {
     }
     setLoading(true);
 
-    const postType = images.length && content ? "text_with_image" : images.length ? "image" : "text";
+    const postType = images.length && content ? "text-with-image" : images.length ? "image" : "text";
 
     try {
       const formData = new FormData();
@@ -34,7 +34,7 @@ const CreatePost = () => {
         formData.append("images", image);
       });
 
-      const data = await api.post("/api/post/add", formData, {headers: {
+      const { data }  = await api.post("/api/post/add", formData, {headers: {
         Authorization: `Bearer ${await getToken()}`
       }});
 

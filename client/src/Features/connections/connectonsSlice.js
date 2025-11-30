@@ -12,7 +12,7 @@ export const fetchConnections = createAsyncThunk("connections/fetchConnections",
     const { data } = await api.get("/api/user/connections", {
         headers: { Authorization: `Bearer ${token}` }
     });
-    return data.sucess ? data : null;
+    return data.success ? data : null;
 });
 
 const connectionsSlice = createSlice({
